@@ -1,26 +1,18 @@
-FROM python:3.9-alpine
+FROM python:3.9-alpine3.13
 
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /requirements.txt
-
-# Install postgres client
-RUN apk add --update --no-cache postgresql-client
-
-# Install individual dependencies
-# so that we could avoid installing extra packages to the container
-RUN apk add --update --no-cache --virtual .tmp-build-deps \
-	gcc libc-dev linux-headers postgresql-dev
-RUN pip install -r /requirements.txt
-
-# Remove dependencies
-RUN apk del .tmp-build-deps
-
-RUN mkdir /newsproj
-WORKDIR /newsproj
 COPY ./newsproj /newsproj
 
-# [Security] Limit the scope of user who run the docker image
-RUN adduser -D user
+WORKDIR /newsproj
+EXPOSE 8000
 
-USER user
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip && \
+    /py/bin/pip install -r /requirements.txt && \
+    adduser --disabled-password --no-create-home app
+
+ENV PATH="/py/bin:$PATH"
+
+USER newsproj
