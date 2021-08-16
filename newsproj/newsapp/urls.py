@@ -4,9 +4,9 @@ from rest_framework import routers
 from .views import *
 
 router = routers.DefaultRouter()
-router.register(r'api/v2/category/', CategoryViewSet)
-router.register(r'api/v2/authors/', AuthorsViewSet)
-router.register(r'api/v2/articles', ArticlesViewSet)
+router.register(r'api/category', CategoryViewSet)
+router.register(r'api/authors', AuthorsViewSet)
+router.register(r'api/articles', ArticlesViewSet)
 
 
 urlpatterns = [

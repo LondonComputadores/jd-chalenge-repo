@@ -22,7 +22,6 @@ class Category(models.Model):
 
 
 class Authors(models.Model):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
     picture = models.ImageField(max_length=None)
@@ -34,7 +33,7 @@ class Authors(models.Model):
 class Articles(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slug = models.SlugField(unique=True)
-    author = models.ForeignKey(Authors, on_delete=models.CASCADE)
+    author = models.ManyToManyField(Authors)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     summary = models.TextField(max_length=300)
@@ -46,7 +45,7 @@ class Articles(models.Model):
         verbose_name_plural = 'Articles'
         
     def get_absolute_url(self):
-        return reverse('articledetails', args=[self.slug])
+        return reverse('articledetails', args=[str(self.id)])
     
     def __str__(self):
         return self.title

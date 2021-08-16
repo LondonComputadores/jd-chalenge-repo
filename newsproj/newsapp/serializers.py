@@ -4,6 +4,7 @@ from newsapp.models import Category, Authors, Articles
 
 class CategorySerializer(serializers.ModelSerializer):
     
+
     class Meta:
         model = Category
         fields = "__all__"
@@ -17,10 +18,19 @@ class AuthorsSerializer(serializers.ModelSerializer):
 
 
 class ArticlesSerializer(serializers.ModelSerializer):
-   """Allow to choose only the fields that will be visible on API"""
-   class Meta:
+    author = AuthorsSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(), slug_field='title'
+    )
+
+    class Meta:
         model = Articles
-        fields = ['author', 
+        fields = ['id',
+                  'author', 
                   'category',
                   'title',
                   'summary',
