@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from . import SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,18 +22,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = '+_nt&ye=jb=3ee7=cz*f16+%&7)ra#sg#j836d@-0p-sriyit@'
+
+# **LOCAL**
+#SECRET_KEY = '+_nt&ye=jb=3ee7=cz*f16+%&7)ra#sg#j836d@-0p-sriyit@'
+
+# **PRODUCTION**
+SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-#DEBUG = int(os.environ.get("DEBUG", default=0))
 
+# **LOCAL**
+DEBUG = True
+
+# **PRODUCTION**
+# DEBUG = int(os.environ.get("DEBUG", default=0))
+
+# **LOCAL**
 ALLOWED_HOSTS = []
-#ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", " ").split(",")
+
+# **PRODUCTION**
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", " ").split(",")
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,7 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'newsapp',
-    'rest_framework'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +90,8 @@ WSGI_APPLICATION = 'newsproj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
+# **LOCAL**
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -86,15 +99,15 @@ DATABASES = {
     }
 }
 
-# Production Database 
 
+# **PRODUCTION** 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'postgres',
-#         'HOST': 'db', # set in docker-compose.yml
-#         'PORT': 5434
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'HOST': os.environ.get('DB_HOST'),
+#        'NAME': os.environ.get('DB_NAME'),
+#        'USER': os.environ.get('DB_USER'),
+#        'PASSWORD': os.environ.get('DB_PASS'),
 #     }
 # }
 
@@ -138,3 +151,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'home'
+
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    )
+}
